@@ -1,0 +1,3 @@
+perl {
+        module = /usr/lib/linotp/radius_linotp.pm
+        }

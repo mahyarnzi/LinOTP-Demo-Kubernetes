@@ -1,0 +1,57 @@
+version: "3.9"
+services:
+  linotp-db:
+    image: mysql:5.6
+    environment:
+      MYSQL_DATABASE: "linotp"
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_USER: "linotp"
+      MYSQL_PASSWORD: "password"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+    restart: on-failure
+
+  linotp-app:
+    image: soffid/linotp
+    environment:
+      MARIADB_PASS: "password"
+      ADMIN_PASSWORD: "password"
+      MARIADB_HOST: "linotp-db"
+
+    depends_on:
+      linotp-db:
+        condition: service_healthy
+
+    ports:
+      - "8080:443/tcp"
+
+    restart: on-failure
+
+  freeradius-app:
+    image: mahyarnzi/linotp-freeradius:v1
+    build:
+     context: linotp-freeradius-image
+
+    environment:
+      RADIUS_CLIENTS: "secret@0.0.0.0/0"
+      RADIUS_LISTEN_IP: "*"
+
+    ports:
+      - "8081:1812/udp"
+      -
+    depends_on:
+      - linotp-app
+
+volumes:
+  mysql-data: {}
+
+
+    
+
