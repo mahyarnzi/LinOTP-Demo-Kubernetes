@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linotp-deploy
+  labels:
+    name: linotp-deploy
+    app: linotp
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: linotp-pod
+      app: linotp
+
+  template:
+    metadata:
+      name: linotp-pod
+      labels:
+        name: linotp-pod
+        app: linotp
+
+    spec:
+      containers:
+        - name: linotp
+          image: soffid/linotp:latest
+
+          ports:
+            - containerPort: 443
+
+          env:
+            - name: MARIADB_PASS
+              value: password
+
+            - name: ADMIN_PASSWORD
+              value: password
+
+            - name: MARIADB_HOST
+              value: linotp-db
