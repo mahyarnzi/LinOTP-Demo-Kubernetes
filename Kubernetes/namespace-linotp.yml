@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: linotp-dev
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: linotp-prod

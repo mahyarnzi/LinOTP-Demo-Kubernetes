@@ -6,6 +6,7 @@ metadata:
   labels:
     name: mysql-pod
     app: linotp
+  namespace: linotp-dev
 
 spec:
   containers:
@@ -15,12 +16,9 @@ spec:
       ports:
         - containerPort: 3306
 
-      env:
-        - name: MYSQL_DATABASE
-          value: linotp
-
-        - name: MYSQL_ROOT_PASSWORD
-          value: password
+      envFrom:
+        - secretRef:
+            name: mysql-secret
 
       volumeMounts:
         - mountPath: /var/lib/mysql

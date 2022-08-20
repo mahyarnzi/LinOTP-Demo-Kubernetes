@@ -5,6 +5,7 @@ metadata:
   labels:
     name: linotp-pod
     app: linotp
+  namespace: linotp-dev
 
 spec:
   containers:
@@ -14,13 +15,9 @@ spec:
       ports:
         - containerPort: 443
 
-      env:
-        - name: MARIADB_PASS
-          value: password
+      envFrom:
+        - secretRef:
+            name: linotp-secret
 
-        - name: ADMIN_PASSWORD
-          value: password
-
-        - name: MARIADB_HOST
-          value: linotp-db
-
+        - configMapRef:
+            name: linotp-config

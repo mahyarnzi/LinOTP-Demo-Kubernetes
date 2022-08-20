@@ -5,6 +5,7 @@ metadata:
   labels:
     name: linotp-app-publish
     app: linotp
+  namespace: linotp-dev
 
 spec:
   type: NodePort

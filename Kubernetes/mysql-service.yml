@@ -5,6 +5,7 @@ metadata:
   labels:
     name: linotp-db
     app: linotp
+  namespace: linotp-dev
 
 spec:
   type: ClusterIP

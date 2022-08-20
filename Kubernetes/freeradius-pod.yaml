@@ -5,18 +5,19 @@ metadata:
   labels:
     name: freeradius-pod
     app: linotp
+  namespace: linotp-dev
 
 spec:
   containers:
     - name: freeradius
       image: mahyarnzi/linotp-freeradius:v1
 
-      env:
-        - name: RADIUS_CLIENTS
-          value: "secret@0.0.0.0/0"
+      envFrom:
+        - configMapRef:
+            name: freeradius-config
 
-        - name: RADIUS_LISTEN_IP
-          value: "*"
+        - secretRef:
+            name: freeradius-secret
 
       ports:
         - containerPort: 1812

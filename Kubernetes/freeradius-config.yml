@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freeradius-config
+  namespace: linotp-dev
+
+data:
+  RADIUS_LISTEN_IP: "*"

@@ -5,6 +5,7 @@ metadata:
   labels:
     name: freeradius-publish
     app: linotp
+  namespace: linotp-dev
 
   annotations:
     metallb.universe.tf/allow-shared-ip: 'true'

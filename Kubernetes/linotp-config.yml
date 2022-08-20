@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linotp-config
+  namespace: linotp-dev
+
+data:
+  MARIADB_HOST: linotp-db

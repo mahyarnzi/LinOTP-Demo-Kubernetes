@@ -45,3 +45,22 @@ spec:
             type: Directory
 
       nodeName: worker1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: linotp-db
+  labels:
+    name: linotp-db
+    app: linotp
+  namespace: linotp-dev
+
+spec:
+  type: ClusterIP
+  selector:
+    name: mysql-pod
+
+  ports:
+    - port: 3306
+      targetPort: 3306
