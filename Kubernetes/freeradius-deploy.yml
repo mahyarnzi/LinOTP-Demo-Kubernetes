@@ -26,6 +26,14 @@ spec:
       containers:
         - name: freeradius
           image: mahyarnzi/linotp-freeradius:v1
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: 0.5
+
+            limits:
+              memory: "1Gi"
+              cpu: 1
 
           envFrom:
             - configMapRef:
