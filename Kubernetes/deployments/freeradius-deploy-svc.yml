@@ -46,20 +46,8 @@ spec:
             - containerPort: 1812
               protocol: UDP
 
-          volumeMounts:
-            - mountPath: /etc/linotp2
-              name: freeradius-data
-
       imagePullSecrets:
         - name: regcred
-
-      volumes:
-        - name: freeradius-data
-          hostPath:
-            path: /data/freeradius
-            type: Directory
-
-      nodeName: worker1
 
 ---
 apiVersion: v1
