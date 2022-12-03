@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: freeradius
-          image: mahyarnzi/linotp-freeradius:v1
+          image: mahyarnzi/linotp-freeradius:latest
           resources:
             requests:
               memory: "512Mi"
