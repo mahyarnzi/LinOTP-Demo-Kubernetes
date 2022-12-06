@@ -1,0 +1,110 @@
+{{ $namespace := include "namespace" . }}
+{{- $projectName := .Values.project_name}}
+{{- with .Values.application}}
+{{/*apiVersion: v1*/}}
+{{/*kind: PersistentVolumeClaim*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ .storage.name}}*/}}
+{{/*  namespace: {{ $namespace}}*/}}
+{{/*spec:*/}}
+{{/*  accessModes:*/}}
+{{/*  - {{ .storage.accessModes}}*/}}
+{{/*  resources:*/}}
+{{/*    requests:*/}}
+{{/*      storage: {{ .storage.capacity}}*/}}
+{{/*  storageClassName: {{ .storage.storageClassName}}*/}}
+
+{{/*---*/}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .deploy_name}}
+  labels:
+    name: {{ .deploy_name}}
+    app: {{ $projectName}}
+  namespace: {{ $namespace}}
+spec:
+  replicas: {{ .replicas}}
+  selector:
+    matchLabels:
+      name: {{ .pod_name}}
+      app: {{ $projectName}}
+  template:
+    metadata:
+      name: {{ .pod_name}}
+      labels:
+        name: {{ .pod_name }}
+        app: {{ $projectName}}
+      namespace: {{ $namespace}}
+    spec:
+      containers:
+        - name: {{ .container_name}}
+          image: {{ .image }}
+          imagePullPolicy: {{ .imagePullPolicy}}
+          resources:
+            requests:
+              memory: {{ .resource.memory.need }}
+              cpu: {{ .resource.cpu.need }}
+            limits:
+              memory: {{ .resource.memory.limit }}
+              cpu: {{ .resource.cpu.limit }}
+          ports:
+            - containerPort: {{ .containerPort }}
+              protocol: {{ .containerProtocol}}
+          envFrom:
+            - secretRef:
+                name: {{ .secret.name}}
+            - configMapRef:
+                name: {{ .configMap.name}}
+{{/*          volumeMounts:*/}}
+{{/*            - mountPath: {{ .volume.mountPath }}*/}}
+{{/*              subPath: {{ .volume.subPath}}*/}}
+{{/*              name: {{ .volume.name }}*/}}
+{{/*      volumes:*/}}
+{{/*        - name: {{ .volume.name }}*/}}
+{{/*          persistentVolumeClaim:*/}}
+{{/*            claimName: {{ .storage.name}}*/}}
+---
+{{- $podName := .pod_name}}
+{{- range $item := .service}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $item.name}}
+  labels:
+    name: {{ $item.name}}
+    app: {{ $projectName}}
+  namespace: {{ $namespace}}
+spec:
+  type: {{ $item.type}}
+  selector:
+    name: {{ $podName}}
+  ports:
+    - port: {{ $item.ports.port }}
+      targetPort: {{ $item.ports.targetPort }}
+      {{- if eq $item.type "NodePort"}}
+      nodePort: {{ $item.ports.nodePort }}
+      {{- end}}
+      protocol: {{ $item.ports.protocol}}
+---
+{{- end}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .secret.name}}
+  namespace: {{ $namespace}}
+data:
+{{- range .secret.data}}
+  {{ .key}}: {{ .value}}
+{{- end}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .configMap.name}}
+  namespace: {{ $namespace}}
+data:
+{{- range .configMap.data}}
+  {{ .key}}: {{ .value}}
+{{- end}}
+{{- end}}
