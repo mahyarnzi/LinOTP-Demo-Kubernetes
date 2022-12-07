@@ -1,20 +1,19 @@
 {{ $namespace := include "namespace" . }}
 {{- $projectName := .Values.project_name}}
 {{- with .Values.application}}
-{{/*apiVersion: v1*/}}
-{{/*kind: PersistentVolumeClaim*/}}
-{{/*metadata:*/}}
-{{/*  name: {{ .storage.name}}*/}}
-{{/*  namespace: {{ $namespace}}*/}}
-{{/*spec:*/}}
-{{/*  accessModes:*/}}
-{{/*  - {{ .storage.accessModes}}*/}}
-{{/*  resources:*/}}
-{{/*    requests:*/}}
-{{/*      storage: {{ .storage.capacity}}*/}}
-{{/*  storageClassName: {{ .storage.storageClassName}}*/}}
-
-{{/*---*/}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .storage.name}}
+  namespace: {{ $namespace}}
+spec:
+  accessModes:
+  - {{ .storage.accessModes}}
+  resources:
+    requests:
+      storage: {{ .storage.capacity}}
+  storageClassName: {{ .storage.storageClassName}}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -56,14 +55,14 @@ spec:
                 name: {{ .secret.name}}
             - configMapRef:
                 name: {{ .configMap.name}}
-{{/*          volumeMounts:*/}}
-{{/*            - mountPath: {{ .volume.mountPath }}*/}}
-{{/*              subPath: {{ .volume.subPath}}*/}}
-{{/*              name: {{ .volume.name }}*/}}
-{{/*      volumes:*/}}
-{{/*        - name: {{ .volume.name }}*/}}
-{{/*          persistentVolumeClaim:*/}}
-{{/*            claimName: {{ .storage.name}}*/}}
+          volumeMounts:
+            - mountPath: {{ .volume.mountPath }}
+              subPath: {{ .volume.subPath}}
+              name: {{ .volume.name }}
+      volumes:
+        - name: {{ .volume.name }}
+          persistentVolumeClaim:
+            claimName: {{ .storage.name}}
 ---
 {{- $podName := .pod_name}}
 {{- range $item := .service}}
