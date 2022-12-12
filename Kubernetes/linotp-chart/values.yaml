@@ -1,10 +1,4 @@
 project_name: linotp
-product_mode:
-  enabled: false
-
-namespaces:
-  - name: linotp-dev
-  - name: linotp-prod
 
 database:
   replicas: 1
@@ -95,7 +89,7 @@ application:
         protocol: TCP
 
 radius:
-  replicas: 0
+  replicas: 1
   deploy_name: freeradius-deploy
   pod_name: freeradius-pod
   container_name: freeradius
@@ -122,7 +116,9 @@ radius:
         value: value
   service:
     - name: freeradius-publish
-      allow_shared_ip: true
+      annotations:
+        - key: ametallb.universe.tf/allow-shared-ip
+          value: true
       type: NodePort
       ports:
         port: 1812

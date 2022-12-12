@@ -1,0 +1,25 @@
+{{- $projectName := .Values.project_name}}
+{{- with .Values.application}}
+{{- $podName := .pod_name}}
+{{- range $item := .service}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $item.name}}
+  labels:
+    name: {{ $item.name}}
+    app: {{ $projectName}}
+spec:
+  type: {{ $item.type}}
+  selector:
+    name: {{ $podName}}
+  ports:
+    - port: {{ $item.ports.port }}
+      targetPort: {{ $item.ports.targetPort }}
+      {{- if eq $item.type "NodePort"}}
+      nodePort: {{ $item.ports.nodePort }}
+      {{- end}}
+      protocol: {{ $item.ports.protocol}}
+---
+{{- end}}
+{{- end}}

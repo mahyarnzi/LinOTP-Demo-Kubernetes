@@ -1,19 +1,5 @@
-{{ $namespace := include "namespace" .}}
 {{- $projectName := .Values.project_name}}
 {{- with .Values.database}}
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .storage.name}}
-  namespace: {{ $namespace}}
-spec:
-  accessModes:
-  - {{ .storage.accessModes}}
-  resources:
-    requests:
-      storage: {{ .storage.capacity}}
-  storageClassName: {{ .storage.storageClassName}}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,7 +7,6 @@ metadata:
   labels:
     name: {{ .deploy_name}}
     app: {{ $projectName}}
-  namespace: {{ $namespace}}
 spec:
   replicas: {{ .replicas}}
   selector:
@@ -34,7 +19,6 @@ spec:
       labels:
         name: {{ .pod_name }}
         app: {{ $projectName }}
-      namespace: {{ $namespace}}
     spec:
       containers:
         - name: {{ .container_name}}
@@ -61,37 +45,4 @@ spec:
         - name: {{ .volume.name}}
           persistentVolumeClaim:
             claimName: {{ .storage.name}}
----
-{{- $podName := .pod_name}}
-{{- range $item := .service}}
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ $item.name}}
-  labels:
-    name: {{ $item.name}}
-    app: {{ $projectName}}
-  namespace: {{ $namespace}}
-spec:
-  type: {{ $item.type}}
-  selector:
-    name: {{ $podName}}
-  ports:
-    - port: {{ $item.ports.port }}
-      targetPort: {{ $item.ports.targetPort }}
-      {{- if eq $item.type "NodePort"}}
-      nodePort: {{ $item.ports.nodePort }}
-      {{- end}}
-      protocol: {{ $item.ports.protocol}}
----
-{{- end}}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ .secret.name}}
-  namespace: {{ $namespace}}
-data:
-{{- range .secret.data}}
-  {{ .key}}: {{ .value}}
-{{- end}}
 {{- end}}

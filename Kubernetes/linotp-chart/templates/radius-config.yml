@@ -1,0 +1,10 @@
+{{- with .Values.application}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .configMap.name}}
+data:
+{{- range .configMap.data}}
+  {{ .key}}: {{ .value}}
+{{- end}}
+{{- end}}
