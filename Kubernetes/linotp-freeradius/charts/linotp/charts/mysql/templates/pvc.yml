@@ -1,14 +1,15 @@
-{{- with .Values.database}}
+{{- if .Values.persistent_volume.enabled }}
+{{- with .Values}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .storage.name}}
 spec:
-  :
   accessModes:
   - {{ .storage.accessModes}}
   resources:
     requests:
       storage: {{ .storage.capacity}}
   storageClassName: {{ .storage.storageClassName}}
+{{- end}}
 {{- end}}

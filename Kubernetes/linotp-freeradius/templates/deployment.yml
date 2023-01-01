@@ -1,5 +1,5 @@
-{{- $projectName := .Values.project_name}}
-{{- with .Values.database}}
+{{- $projectName := .Values.global.project_name}}
+{{- with .Values.radius}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,28 +21,23 @@ spec:
         app: {{ $projectName }}
     spec:
       containers:
-        - name: {{ .container_name}}
-          image: {{ .image}}
+        - name: {{ .container_name }}
+          image: {{ .image }}
           imagePullPolicy: {{ .imagePullPolicy}}
           resources:
             requests:
               memory: {{ .resource.memory.need }}
               cpu: {{ .resource.cpu.need }}
             limits:
-              memory: {{ .resource.memory.limit}}
+              memory: {{ .resource.memory.limit }}
               cpu: {{ .resource.cpu.limit }}
-          ports:
-            - containerPort: {{ .containerPort}}
-              protocol: {{ .containerProtocol}}
           envFrom:
             - secretRef:
                 name: {{ .secret.name}}
-          volumeMounts:
-            - mountPath: {{ .volume.mountPath }}
-              subPath: {{ .volume.subPath}}
-              name: {{ .volume.name}}
-      volumes:
-        - name: {{ .volume.name}}
-          persistentVolumeClaim:
-            claimName: {{ .storage.name}}
+
+            - configMapRef:
+                name: {{ .configMap.name}}
+          ports:
+            - containerPort: {{ .containerPort }}
+              protocol: {{ .containerProtocol}}
 {{- end}}

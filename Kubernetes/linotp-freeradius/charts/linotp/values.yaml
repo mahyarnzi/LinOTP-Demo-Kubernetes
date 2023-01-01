@@ -1,0 +1,24 @@
+replicas: 1
+deploy_name: linotp
+pod_name: linotp-pod
+container_name: linotp
+image: soffid/linotp:latest
+imagePullPolicy: IfNotPresent
+containerPort: 443
+containerProtocol: TCP
+persistent_volume:
+  enabled: false
+service:
+  - name: linotp-app
+    type: ClusterIP
+    ports:
+      port: 443
+      targetPort: 443
+      protocol: TCP
+  - name: linotp-app-publish
+    type: NodePort
+    ports:
+      port: 443
+      targetPort: 443
+      nodePort: 30000
+      protocol: TCP

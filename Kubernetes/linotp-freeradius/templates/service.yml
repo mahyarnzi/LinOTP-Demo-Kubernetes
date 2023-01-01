@@ -1,4 +1,4 @@
-{{- $projectName := .Values.project_name}}
+{{- $projectName := .Values.global.project_name}}
 {{- with .Values.radius}}
 {{- $podName := .pod_name}}
 {{- range $item := .service}}

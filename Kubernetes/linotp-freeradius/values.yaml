@@ -1,53 +1,16 @@
-project_name: linotp
+global:
+  project_name: linotp
 
-database:
-  replicas: 1
-  deploy_name: linotp-db
-  storage:
-    name: mysql-pvc
-    capacity: 10Gi
-    accessModes: ReadWriteOnce
-    storageClassName: csi-s3
-  pod_name: mysql-pod
-  container_name: mysql
-  containerPort: 3306
-  containerProtocol: TCP
-  image: mysql:5.6
-  imagePullPolicy: IfNotPresent
-  resource:
-    memory:
-      need: 1Gi
-      limit: 2Gi
-    cpu:
-      need: 1
-      limit: 2
-  secret:
-    name: mysql-secret
-    data:
-      - key: key
-        value: value
-  volume:
-    name: linotp-data
-    mountPath: /var/lib/mysql
-    subPath: "mysql"
-  service:
-    - name: linotp-db
-      type: ClusterIP
-      ports:
-        port: 3306
-        targetPort: 3306
-        protocol: TCP
-
-application:
+linotp:
   replicas: 1
   deploy_name: linotp-app
+  persistent_volume:
+    enabled: true
   storage:
     name: linotp-pvc
     capacity: 1Gi
     accessModes: ReadWriteOnce
     storageClassName: csi-s3
-  pod_name: linotp-pod
-  container_name: linotp
   image: soffid/linotp:latest
   imagePullPolicy: IfNotPresent
   resource:
@@ -57,8 +20,6 @@ application:
     cpu:
       need: 1
       limit: 2
-  containerPort: 443
-  containerProtocol: TCP
   secret:
     name: linotp-secret
     data:
@@ -87,6 +48,42 @@ application:
         targetPort: 443
         nodePort: 30000
         protocol: TCP
+
+  mysql:
+    replicas: 1
+    deploy_name: linotp-db
+    persistent_volume:
+      enabled: false
+    storage:
+      name: mysql-pvc
+      capacity: 10Gi
+      accessModes: ReadWriteOnce
+      storageClassName: csi-s3
+    image: mysql:5.6
+    imagePullPolicy: IfNotPresent
+    resource:
+      memory:
+        need: 1Gi
+        limit: 2Gi
+      cpu:
+        need: 1
+        limit: 2
+    secret:
+      name: mysql-secret
+      data:
+        - key: key
+          value: value
+    volume:
+      name: linotp-data
+      mountPath: /var/lib/mysql
+      subPath: "mysql"
+    service:
+      - name: linotp-db
+        type: ClusterIP
+        ports:
+          port: 3306
+          targetPort: 3306
+          protocol: TCP
 
 radius:
   replicas: 1

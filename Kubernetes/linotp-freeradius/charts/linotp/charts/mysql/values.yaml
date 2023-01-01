@@ -1,0 +1,17 @@
+replicas: 1
+deploy_name: mysql
+pod_name: mysql-pod
+container_name: mysql
+containerPort: 3306
+containerProtocol: TCP
+image: mysql:5.6
+imagePullPolicy: IfNotPresent
+persistent_volume:
+  enabled: false
+service:
+  - name: mysql-ClusterIP
+    type: ClusterIP
+    ports:
+      port: 3306
+      targetPort: 3306
+      protocol: TCP

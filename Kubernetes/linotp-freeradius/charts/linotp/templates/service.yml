@@ -1,5 +1,5 @@
-{{- $projectName := .Values.project_name}}
-{{- with .Values.database}}
+{{- $projectName := .Values.global.project_name}}
+{{- with .Values}}
 {{- $podName := .pod_name}}
 {{- range $item := .service}}
 apiVersion: v1

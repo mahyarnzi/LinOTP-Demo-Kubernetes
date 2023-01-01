@@ -1,5 +1,5 @@
-{{- $projectName := .Values.project_name}}
-{{- with .Values.application}}
+{{- $projectName := .Values.global.project_name}}
+{{- with .Values}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,33 +18,35 @@ spec:
       name: {{ .pod_name}}
       labels:
         name: {{ .pod_name }}
-        app: {{ $projectName}}
+        app: {{ $projectName }}
     spec:
       containers:
         - name: {{ .container_name}}
-          image: {{ .image }}
+          image: {{ .image}}
           imagePullPolicy: {{ .imagePullPolicy}}
           resources:
             requests:
               memory: {{ .resource.memory.need }}
               cpu: {{ .resource.cpu.need }}
             limits:
-              memory: {{ .resource.memory.limit }}
+              memory: {{ .resource.memory.limit}}
               cpu: {{ .resource.cpu.limit }}
           ports:
-            - containerPort: {{ .containerPort }}
+            - containerPort: {{ .containerPort}}
               protocol: {{ .containerProtocol}}
           envFrom:
             - secretRef:
                 name: {{ .secret.name}}
-            - configMapRef:
-                name: {{ .configMap.name}}
+          {{- if .persistent_volume.enabled }}
           volumeMounts:
             - mountPath: {{ .volume.mountPath }}
               subPath: {{ .volume.subPath}}
-              name: {{ .volume.name }}
+              name: {{ .volume.name}}
+          {{- end}}
+      {{- if .persistent_volume.enabled }}
       volumes:
-        - name: {{ .volume.name }}
+        - name: {{ .volume.name}}
           persistentVolumeClaim:
             claimName: {{ .storage.name}}
+      {{- end}}
 {{- end}}
