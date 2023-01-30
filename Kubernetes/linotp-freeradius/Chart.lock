@@ -1,6 +1,0 @@
-dependencies:
-- name: linotp
-  repository: ""
-  version: 1.0.0
-digest: sha256:d45bb6f8c1624c4e54817f1a21c9a176c2e3595ea911bd79f763b3bf25c6f627
-generated: "2022-12-31T16:59:12.845493935+03:30"
