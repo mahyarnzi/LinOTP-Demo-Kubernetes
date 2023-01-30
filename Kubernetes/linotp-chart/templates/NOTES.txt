@@ -1,5 +1,0 @@
-This project was implemented by IT R&D team.
-Used:
-    1. Image "{{ .Values.database.image }}" for LinOTP database.
-    2. Image "{{ .Values.radius.image }}" for Radius server
-    3. Image "{{ .Values.application.image }}" for LinOTP application.

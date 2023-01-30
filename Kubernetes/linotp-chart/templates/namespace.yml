@@ -1,7 +1,0 @@
-{{- range $namespace := .Values.namespaces}}
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: {{ $namespace.name }}
----
-{{- end}}
