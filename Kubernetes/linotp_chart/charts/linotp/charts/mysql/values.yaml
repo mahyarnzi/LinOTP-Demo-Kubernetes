@@ -1,17 +1,53 @@
 replicas: 1
 deploy_name: mysql
-pod_name: mysql-pod
-container_name: mysql
-containerPort: 3306
-containerProtocol: TCP
-image: mysql:5.6
-imagePullPolicy: IfNotPresent
-persistent_volume:
-  enabled: false
+containers:
+  init:
+    name: init-mysql
+    image: mysql:5.6
+    imagePullPolicy: IfNotPresent
+  clone:
+    name: clone-mysql
+    image: gcr.io/google-samples/xtrabackup:1.0
+    imagePullPolicy: IfNotPresent
+  main:
+    name: mysql
+    image: mysql:5.6
+    imagePullPolicy: IfNotPresent
+    resource:
+      memory:
+        need: 1Gi
+        limit: "2Gi"
+      cpu:
+        need: 500m
+        limit: 2
+    containerPort: 3306
+    containerProtocol: TCP
+    livenessProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+    readinessProbe:
+      initialDelaySeconds: 5
+      periodSeconds: 2
+      timeoutSeconds: 1
+  backup:
+    name: xtrabackup
+    image: gcr.io/google-samples/xtrabackup:1.0
+    imagePullPolicy: IfNotPresent
+    containerPort: 3307
+    containerProtocol: TCP
+    resource:
+      memory:
+        need: 100Mi
+        limit: 500Mi
+      cpu:
+        need: 100m
+        limit: 500m
+storage:
+      name: mysql-pvc
+      capacity: 1Gi
+      accessModes: ReadWriteOnce
+      storageClassName: csi-s3
 service:
-  - name: mysql-ClusterIP
-    type: ClusterIP
-    ports:
-      port: 3306
-      targetPort: 3306
-      protocol: TCP
+  name: mysql
+  

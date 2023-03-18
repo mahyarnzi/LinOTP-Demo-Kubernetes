@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: linotp-dev
+  
+data:
+  primary.cnf: |
+    # Apply this config only on the primary.
+    [mysqld]
+    log-bin
+  replica.cnf: |
+    # Apply this config only on replicas.
+    [mysqld]
+    read_only=1

@@ -5,4 +5,4 @@ metadata:
   namespace: linotp-dev
 
 data:
-  MARIADB_HOST: linotp-db
+  MARIADB_HOST: linotp-db-0.linotp-db

@@ -1,25 +1,36 @@
 {{- $projectName := .Values.global.project_name}}
 {{- with .Values}}
-{{- $podName := .pod_name}}
-{{- range $item := .service}}
+# service for stable DNS entries of StatefulSet members.
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $item.name}}
+  name: {{ .service.name}}
   labels:
-    name: {{ $item.name}}
+    name: {{ .service.name}}
     app: {{ $projectName}}
 spec:
-  type: {{ $item.type}}
-  selector:
-    name: {{ $podName}}
   ports:
-    - port: {{ $item.ports.port }}
-      targetPort: {{ $item.ports.targetPort }}
-      {{- if eq $item.type "NodePort"}}
-      nodePort: {{ $item.ports.nodePort }}
-      {{- end}}
-      protocol: {{ $item.ports.protocol}}
+  - name: {{ .containers.main.name}}
+    port: {{ .containers.main.containerPort}}
+  clusterIP: None
+  selector:
+    name: {{ .deploy_name}}
+    app: {{ $projectName}}
 ---
-{{- end}}
+# Client service for connecting to any MySQL instance for reads.
+# For writes, you must instead connect to the primary: mysql-0.mysql.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .service.name}}-read
+  labels:
+    name: {{ .service.name}}-read
+    app: {{ $projectName}}
+spec:
+  ports:
+  - name: {{ .containers.main.name}}
+    port: {{ .containers.main.containerPort}}
+  selector:
+    name: {{ .deploy_name}}
+    app: {{ $projectName}}
 {{- end}}

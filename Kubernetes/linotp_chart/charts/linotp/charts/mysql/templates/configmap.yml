@@ -1,0 +1,17 @@
+{{- with .Values}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .configMap.name}}
+
+data:
+  primary.cnf: |
+    # Apply this config only on the primary.
+    [mysqld]
+    log-bin    
+  replica.cnf: |
+    # Apply this config only on replicas.
+    [mysqld]
+    read_only=1
+
+{{- end}}

@@ -5,7 +5,7 @@ linotp:
   replicas: 1
   deploy_name: linotp-app
   persistent_volume:
-    enabled: true
+    enabled: false
   storage:
     name: linotp-pvc
     capacity: 1Gi
@@ -50,40 +50,38 @@ linotp:
         protocol: TCP
 
   mysql:
-    replicas: 1
+    replicas: 2
     deploy_name: linotp-db
-    persistent_volume:
-      enabled: false
     storage:
-      name: mysql-pvc
-      capacity: 10Gi
+      name: data
+      capacity: 5Gi
       accessModes: ReadWriteOnce
       storageClassName: csi-s3
-    image: mysql:5.6
-    imagePullPolicy: IfNotPresent
-    resource:
-      memory:
-        need: 1Gi
-        limit: 2Gi
-      cpu:
-        need: 1
-        limit: 2
+    containers:
+      init:
+        image: mysql:5.6
+      clone:
+        image: gcr.io/google-samples/xtrabackup:1.0
+      main:
+        image: mysql:5.6
+        resource:
+          memory:
+            need: 1Gi
+            limit: 2Gi
+          cpu:
+            need: 500m
+            limit: 2
+      backup:
+        image: gcr.io/google-samples/xtrabackup:1.0
+    configMap:
+      name: mysql-config
     secret:
       name: mysql-secret
       data:
         - key: key
           value: value
-    volume:
-      name: linotp-data
-      mountPath: /var/lib/mysql
-      subPath: "mysql"
     service:
-      - name: linotp-db
-        type: ClusterIP
-        ports:
-          port: 3306
-          targetPort: 3306
-          protocol: TCP
+      name: linotp-db
 
 radius:
   replicas: 1
